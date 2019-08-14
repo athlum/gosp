@@ -56,7 +56,7 @@ func (s *Company) FieldArray() []string {
 }
 
 func (s *CompanyModel) PK() (*q.Field, interface{}) {
-	m, _ := s.Query().GetMain()
+	m, _ := s.Queryset().GetMain()
 	return m.Model.PK()
 }
 
@@ -64,7 +64,7 @@ func (s *Company) PK() (*q.Field, interface{}) {
 	return s.Fields().ID, s.ID
 }
 
-func (s *CompanyModel) Query() *q.Query {
+func (s *CompanyModel) Queryset() *q.Query {
 	if s.query == nil {
 		s.query = q.NewQuery(&Company{})
 	}
@@ -72,7 +72,7 @@ func (s *CompanyModel) Query() *q.Query {
 }
 
 func (s *CompanyModel) Where(cs ...*q.Condition) *CompanyModel {
-	s.Query().Where(cs...)
+	s.Queryset().Where(cs...)
 	return s
 }
 
@@ -98,7 +98,7 @@ var _companyDefaultRels = map[string]string{
 
 func (s *CompanyModel) Join(qm q.QueryModel, direction string, fs ...*q.Field) *CompanyModel {
 	var (
-		qs  = s.Query()
+		qs  = s.Queryset()
 		f   *q.Field
 		js  *q.Joinset
 		err error
@@ -106,13 +106,13 @@ func (s *CompanyModel) Join(qm q.QueryModel, direction string, fs ...*q.Field) *
 	if len(fs) > 0 {
 		f = fs[0]
 	}
-	iqs := qm.Query()
-	var main *q.ModelSet
+	iqs := qm.Queryset()
+	var main *q.Modelset
 	main, err = iqs.GetMain()
 	if err == nil {
 		js, err = s.getJs(qm, f)
 		if err == nil {
-			js.JoinModelSet(main)
+			js.JoinModelset(main)
 		}
 		if direction != "" {
 			js.Direction(direction)

@@ -52,7 +52,7 @@ func (s *Guild) FieldArray() []string {
 }
 
 func (s *GuildModel) PK() (*q.Field, interface{}) {
-	m, _ := s.Query().GetMain()
+	m, _ := s.Queryset().GetMain()
 	return m.Model.PK()
 }
 
@@ -60,7 +60,7 @@ func (s *Guild) PK() (*q.Field, interface{}) {
 	return s.Fields().ID, s.ID
 }
 
-func (s *GuildModel) Query() *q.Query {
+func (s *GuildModel) Queryset() *q.Query {
 	if s.query == nil {
 		s.query = q.NewQuery(&Guild{})
 	}
@@ -68,7 +68,7 @@ func (s *GuildModel) Query() *q.Query {
 }
 
 func (s *GuildModel) Where(cs ...*q.Condition) *GuildModel {
-	s.Query().Where(cs...)
+	s.Queryset().Where(cs...)
 	return s
 }
 
@@ -94,7 +94,7 @@ var _guildDefaultRels = map[string]string{
 
 func (s *GuildModel) Join(qm q.QueryModel, direction string, fs ...*q.Field) *GuildModel {
 	var (
-		qs  = s.Query()
+		qs  = s.Queryset()
 		f   *q.Field
 		js  *q.Joinset
 		err error
@@ -102,13 +102,13 @@ func (s *GuildModel) Join(qm q.QueryModel, direction string, fs ...*q.Field) *Gu
 	if len(fs) > 0 {
 		f = fs[0]
 	}
-	iqs := qm.Query()
-	var main *q.ModelSet
+	iqs := qm.Queryset()
+	var main *q.Modelset
 	main, err = iqs.GetMain()
 	if err == nil {
 		js, err = s.getJs(qm, f)
 		if err == nil {
-			js.JoinModelSet(main)
+			js.JoinModelset(main)
 		}
 		if direction != "" {
 			js.Direction(direction)

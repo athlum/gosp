@@ -52,7 +52,7 @@ func (s *Team) FieldArray() []string {
 }
 
 func (s *TeamModel) PK() (*q.Field, interface{}) {
-	m, _ := s.Query().GetMain()
+	m, _ := s.Queryset().GetMain()
 	return m.Model.PK()
 }
 
@@ -60,7 +60,7 @@ func (s *Team) PK() (*q.Field, interface{}) {
 	return s.Fields().ID, s.ID
 }
 
-func (s *TeamModel) Query() *q.Query {
+func (s *TeamModel) Queryset() *q.Query {
 	if s.query == nil {
 		s.query = q.NewQuery(&Team{})
 	}
@@ -68,7 +68,7 @@ func (s *TeamModel) Query() *q.Query {
 }
 
 func (s *TeamModel) Where(cs ...*q.Condition) *TeamModel {
-	s.Query().Where(cs...)
+	s.Queryset().Where(cs...)
 	return s
 }
 
@@ -94,7 +94,7 @@ var _teamDefaultRels = map[string]string{
 
 func (s *TeamModel) Join(qm q.QueryModel, direction string, fs ...*q.Field) *TeamModel {
 	var (
-		qs  = s.Query()
+		qs  = s.Queryset()
 		f   *q.Field
 		js  *q.Joinset
 		err error
@@ -102,13 +102,13 @@ func (s *TeamModel) Join(qm q.QueryModel, direction string, fs ...*q.Field) *Tea
 	if len(fs) > 0 {
 		f = fs[0]
 	}
-	iqs := qm.Query()
-	var main *q.ModelSet
+	iqs := qm.Queryset()
+	var main *q.Modelset
 	main, err = iqs.GetMain()
 	if err == nil {
 		js, err = s.getJs(qm, f)
 		if err == nil {
-			js.JoinModelSet(main)
+			js.JoinModelset(main)
 		}
 		if direction != "" {
 			js.Direction(direction)

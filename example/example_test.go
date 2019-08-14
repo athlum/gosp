@@ -1,7 +1,6 @@
 package example
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -29,15 +28,17 @@ func TestQuery(t *testing.T) {
 		team.Where(
 			team.Fields().Name.EQ("team_asd"),
 		),
-	).Query().Fields(
-		student.Fields().Name.String(),
-		school.Fields().Name.String(),
-		company.Fields().Name.String(),
-		guild.Fields().Name.String(),
-		team.Fields().Name.String(),
+	).Queryset().Fields(
+		student.Fields().Name,
+		school.Fields().Name,
+		company.Fields().Name,
+		guild.Fields().Name,
+		team.Fields().Name,
 	).WithoutModelFields().Query()
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Println(qs)
+	if qs != `select student.name,school.name,company.name,guild.name,team.name from student inner join school on student.expect = school.name inner join stc inner join company on stc.company = company.id on student.id = stc.person inner join stg inner join guild on stg.guild_id = guild.id on student.id = stg.student_id inner join student_team inner join team on student_team.team_id = team.id on student.id = student_team.student_id where school.name = 'school_asd' and company.name = 'company_asd' and guild.name = 'guild_asd' and team.name = 'team_asd'` {
+		t.Error("wrong query")
+	}
 }

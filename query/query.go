@@ -35,7 +35,7 @@ const (
 )
 
 type Query struct {
-	main               *ModelSet
+	main               *Modelset
 	fields             []string
 	orderBy            []string
 	groupBy            []string
@@ -47,7 +47,7 @@ type Query struct {
 
 func NewQuery(m Model) *Query {
 	return &Query{
-		main: NewModelSet(m, nil, nil),
+		main: NewModelset(m, nil, nil),
 	}
 }
 
@@ -79,30 +79,21 @@ func (q *Query) WithoutModelFields() *Query {
 	return q
 }
 
-func (q *Query) OrderBy(field *Field, typ string) *Query {
-	return q.OrderByString(field.String(), typ)
-}
-
-func (q *Query) OrderByString(field, typ string) *Query {
+func (q *Query) OrderBy(field interface{}, typ string) *Query {
 	if q.orderBy == nil {
 		q.orderBy = []string{}
 	}
-	q.orderBy = append(q.orderBy, fmt.Sprintf("%v %v", field, typ))
+	q.orderBy = append(q.orderBy, fmt.Sprintf("%v %v", escape(field), typ))
 	return q
 }
 
-func (q *Query) GroupBy(fs ...*Field) *Query {
-	for _, f := range fs {
-		q.GroupByString(f.String())
-	}
-	return q
-}
-
-func (q *Query) GroupByString(fs ...string) *Query {
+func (q *Query) GroupBy(fs ...interface{}) *Query {
 	if q.groupBy == nil {
 		q.groupBy = []string{}
 	}
-	q.groupBy = append(q.groupBy, fs...)
+	for _, f := range fs {
+		q.groupBy = append(q.groupBy, escape(f))
+	}
 	return q
 }
 
@@ -116,15 +107,17 @@ func (q *Query) Offset(o int) *Query {
 	return q
 }
 
-func (q *Query) Fields(fs ...string) *Query {
+func (q *Query) Fields(fs ...interface{}) *Query {
 	if q.fields == nil {
 		q.fields = []string{}
 	}
-	q.fields = append(q.fields, fs...)
+	for _, f := range fs {
+		q.fields = append(q.fields, escape(f))
+	}
 	return q
 }
 
-func (q *Query) GetMain() (*ModelSet, error) {
+func (q *Query) GetMain() (*Modelset, error) {
 	if q.main == nil {
 		return nil, ErrNilModel
 	}
@@ -216,4 +209,11 @@ func (q *Query) CountQuery(fields ...string) (string, error) {
 		pk = TableField("", fields[0])
 	}
 	return q.fieldQuery(pk.Count().String())
+}
+
+func escape(v interface{}) string {
+	if f, ok := v.(*Field); ok {
+		return f.String()
+	}
+	return v.(string)
 }

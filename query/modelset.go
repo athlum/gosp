@@ -5,33 +5,33 @@ import (
 	"strings"
 )
 
-type ModelSet struct {
+type Modelset struct {
 	Model      Model
 	Conditions Conditions
 	Joins      Joinsets
 }
 
-func NewModelSet(m Model, cs Conditions, joins Joinsets) *ModelSet {
-	return &ModelSet{
+func NewModelset(m Model, cs Conditions, joins Joinsets) *Modelset {
+	return &Modelset{
 		Model:      m,
 		Conditions: cs,
 		Joins:      joins,
 	}
 }
 
-func (ms *ModelSet) Fork() *ModelSet {
-	return &ModelSet{
+func (ms *Modelset) Fork() *Modelset {
+	return &Modelset{
 		Model:      ms.Model,
 		Conditions: ms.Conditions.Fork(),
 		Joins:      ms.Joins.Fork(),
 	}
 }
 
-func (ms *ModelSet) SameModel(m *ModelSet) bool {
+func (ms *Modelset) SameModel(m *Modelset) bool {
 	return ms.Model.TableName() == m.Model.TableName()
 }
 
-func (ms *ModelSet) JoinReplace(m *ModelSet) (*ModelSet, error) {
+func (ms *Modelset) JoinReplace(m *Modelset) (*Modelset, error) {
 	if ms.Model == nil {
 		return nil, ErrNilModel
 	}
@@ -42,7 +42,7 @@ func (ms *ModelSet) JoinReplace(m *ModelSet) (*ModelSet, error) {
 		return cm, nil
 	} else {
 		for _, j := range ms.Joins {
-			if err := j.JoinModelSet(m); err != nil {
+			if err := j.JoinModelset(m); err != nil {
 				return nil, err
 			}
 		}
@@ -50,7 +50,7 @@ func (ms *ModelSet) JoinReplace(m *ModelSet) (*ModelSet, error) {
 	return ms, nil
 }
 
-func (ms *ModelSet) FieldArray() ([]string, error) {
+func (ms *Modelset) FieldArray() ([]string, error) {
 	if ms.Model == nil {
 		return nil, ErrNilModel
 	}
@@ -58,7 +58,7 @@ func (ms *ModelSet) FieldArray() ([]string, error) {
 	return fs, nil
 }
 
-func (ms *ModelSet) PK() (*Field, interface{}, error) {
+func (ms *Modelset) PK() (*Field, interface{}, error) {
 	if ms.Model == nil {
 		return nil, nil, ErrNilModel
 	}
@@ -66,17 +66,17 @@ func (ms *ModelSet) PK() (*Field, interface{}, error) {
 	return f, v, nil
 }
 
-func (ms *ModelSet) Where(cs ...*Condition) *ModelSet {
+func (ms *Modelset) Where(cs ...*Condition) *Modelset {
 	ms.Conditions = append(ms.Conditions, cs...)
 	return ms
 }
 
-func (ms *ModelSet) Join(rs ...*Joinset) *ModelSet {
+func (ms *Modelset) Join(rs ...*Joinset) *Modelset {
 	ms.Joins = append(ms.Joins, rs...)
 	return ms
 }
 
-func (ms *ModelSet) Query(fields ...string) (string, error) {
+func (ms *Modelset) Query(fields ...string) (string, error) {
 	if ms.Model == nil {
 		return "", ErrNilModel
 	}
@@ -85,7 +85,7 @@ func (ms *ModelSet) Query(fields ...string) (string, error) {
 	return qs, nil
 }
 
-func (ms *ModelSet) Tuple() (string, Conditions) {
+func (ms *Modelset) Tuple() (string, Conditions) {
 	var (
 		cs = []*Condition(ms.Conditions)
 		tn = ms.Model.TableName()

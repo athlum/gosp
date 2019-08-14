@@ -61,7 +61,7 @@ func (s *STC) FieldArray() []string {
 }
 
 func (s *STCModel) PK() (*q.Field, interface{}) {
-	m, _ := s.Query().GetMain()
+	m, _ := s.Queryset().GetMain()
 	return m.Model.PK()
 }
 
@@ -69,7 +69,7 @@ func (s *STC) PK() (*q.Field, interface{}) {
 	return s.Fields().ID, s.ID
 }
 
-func (s *STCModel) Query() *q.Query {
+func (s *STCModel) Queryset() *q.Query {
 	if s.query == nil {
 		s.query = q.NewQuery(&STC{})
 	}

@@ -19,5 +19,5 @@ type QueryModel interface {
 	TableName() string
 	FieldArray() []string
 	PK() (*Field, interface{})
-	Query() *Query
+	Queryset() *Query
 }

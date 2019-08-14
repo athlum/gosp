@@ -61,7 +61,7 @@ func (s *StudentTeam) FieldArray() []string {
 }
 
 func (s *StudentTeamModel) PK() (*q.Field, interface{}) {
-	m, _ := s.Query().GetMain()
+	m, _ := s.Queryset().GetMain()
 	return m.Model.PK()
 }
 
@@ -69,7 +69,7 @@ func (s *StudentTeam) PK() (*q.Field, interface{}) {
 	return s.Fields().ID, s.ID
 }
 
-func (s *StudentTeamModel) Query() *q.Query {
+func (s *StudentTeamModel) Queryset() *q.Query {
 	if s.query == nil {
 		s.query = q.NewQuery(&StudentTeam{})
 	}

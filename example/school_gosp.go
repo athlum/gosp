@@ -52,7 +52,7 @@ func (s *School) FieldArray() []string {
 }
 
 func (s *SchoolModel) PK() (*q.Field, interface{}) {
-	m, _ := s.Query().GetMain()
+	m, _ := s.Queryset().GetMain()
 	return m.Model.PK()
 }
 
@@ -60,7 +60,7 @@ func (s *School) PK() (*q.Field, interface{}) {
 	return s.Fields().ID, s.ID
 }
 
-func (s *SchoolModel) Query() *q.Query {
+func (s *SchoolModel) Queryset() *q.Query {
 	if s.query == nil {
 		s.query = q.NewQuery(&School{})
 	}
@@ -68,7 +68,7 @@ func (s *SchoolModel) Query() *q.Query {
 }
 
 func (s *SchoolModel) Where(cs ...*q.Condition) *SchoolModel {
-	s.Query().Where(cs...)
+	s.Queryset().Where(cs...)
 	return s
 }
 
@@ -94,7 +94,7 @@ var _schoolDefaultRels = map[string]string{
 
 func (s *SchoolModel) Join(qm q.QueryModel, direction string, fs ...*q.Field) *SchoolModel {
 	var (
-		qs  = s.Query()
+		qs  = s.Queryset()
 		f   *q.Field
 		js  *q.Joinset
 		err error
@@ -102,13 +102,13 @@ func (s *SchoolModel) Join(qm q.QueryModel, direction string, fs ...*q.Field) *S
 	if len(fs) > 0 {
 		f = fs[0]
 	}
-	iqs := qm.Query()
-	var main *q.ModelSet
+	iqs := qm.Queryset()
+	var main *q.Modelset
 	main, err = iqs.GetMain()
 	if err == nil {
 		js, err = s.getJs(qm, f)
 		if err == nil {
-			js.JoinModelSet(main)
+			js.JoinModelset(main)
 		}
 		if direction != "" {
 			js.Direction(direction)

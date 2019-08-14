@@ -23,12 +23,12 @@ func (js Joinsets) Fork() Joinsets {
 type JoinsetMap map[string]*Joinset
 
 type Joinset struct {
-	model     *ModelSet
+	model     *Modelset
 	direction string
 	on        *Condition
 }
 
-func NewJoinset(model *ModelSet, c *Condition) *Joinset {
+func NewJoinset(model *Modelset, c *Condition) *Joinset {
 	return &Joinset{
 		model:     model,
 		direction: Join_Inner,
@@ -36,12 +36,12 @@ func NewJoinset(model *ModelSet, c *Condition) *Joinset {
 	}
 }
 
-func (js *Joinset) SetModelSet(m *ModelSet) *Joinset {
+func (js *Joinset) SetModelset(m *Modelset) *Joinset {
 	js.model =m
 	return js
 }
 
-func (js *Joinset) JoinModelSet(m *ModelSet) error {
+func (js *Joinset) JoinModelset(m *Modelset) error {
 	nm, err := js.model.JoinReplace(m)
 	if err != nil {
 		return err
